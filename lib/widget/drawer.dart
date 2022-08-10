@@ -16,8 +16,6 @@ class SideDrawer extends StatelessWidget {
     todoItemArray = item;
   }
 
-  void callTodo(item) {
-  }
 
   Widget build(BuildContext context) {
     return ListView.builder(

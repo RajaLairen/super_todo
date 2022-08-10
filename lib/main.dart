@@ -7,9 +7,7 @@ void main() {
 }
 
 class App extends StatefulWidget {
-  static void callTodo(key) {
-    print(key);
-  }
+  static void callTodo(key) {}
 
   const App({Key? key, this.callAdd}) : super(key: key);
   final callAdd;
@@ -24,20 +22,35 @@ class _AppState extends State<App> {
   var currentTodo = "Today";
   var arr = [];
 
+  //set the current todo Item
+  void callTodo(item) {
+    setState(() {
+      currentTodo = item;
+    });
+  }
+
+  //List to track todoItems
   static var todoItemArray = <Widget>[];
   String todoName = "";
 
-  var toDoItems = <String, dynamic>{
-    'Today': [],
-    'Shop': [],
+  final toDoItems = <String, dynamic>{"Today": []
   };
 
   var _inputText = "";
 
+  //Add a particulator todo list item to a particular todoItem
   void add() {
-    if (arr.isEmpty) {
-      count = 0;
+    if (todoItemArray.length == 0) {
+      todoItemArray.add(
+        RaisedButton(
+          onPressed: () {
+            callTodo("Today");
+          },
+          child: Text("Today"),
+        ),
+      );
     }
+
     setState(() {
       if (!_inputText.isEmpty) {
         toDoItems[currentTodo].add(Item(
@@ -50,11 +63,10 @@ class _AppState extends State<App> {
   }
 
   void delete(indx) {
-    setState(() {
-      arr.removeAt(indx);
-    });
+    print(indx);
   }
 
+  //Add to toItem
   void addTodoItem() {
     if (todoName.isNotEmpty) {
       var nme = todoName;
@@ -62,7 +74,9 @@ class _AppState extends State<App> {
         toDoItems.putIfAbsent(todoName, () => []);
         todoItemArray.add(
           RaisedButton(
-            onPressed: () {},
+            onPressed: () {
+              callTodo(nme);
+            },
             child: Text(todoName),
           ),
         );
@@ -70,11 +84,11 @@ class _AppState extends State<App> {
     }
   }
 
-  void DrawerOnOf() {
-    setState(() {
-      drawerOn = false;
-    });
-  }
+  // void DrawerOnOf() {
+  //   setState(() {
+  //     drawerOn = false;
+  //   });
+  // }
 
   Widget build(BuildContext context) {
     return (MaterialApp(
@@ -83,65 +97,36 @@ class _AppState extends State<App> {
         appBar: AppBar(
           title: Center(child: Text("To do")),
         ),
-        body: ListView.builder(
-          itemCount: toDoItems[currentTodo].length,
-          itemBuilder: (BuildContext ctx, int i) {
-            return Table(
-              children: [
-                TableRow(
-                  children: [
-                    Checkbox(
-                      value: true,
-                      onChanged: null,
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 10),
-                      child: Text(
-                        toDoItems[currentTodo][i].itemName,
-                        style: TextStyle(
-                            fontSize: 20,
-                            decoration:
-                                true ? TextDecoration.lineThrough : null),
-                      ),
-                    ),
-                    Container(
-                      margin: EdgeInsets.only(top: 5),
-                      child: FloatingActionButton(
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.red,
-                        ),
-                        onPressed: null,
-                        backgroundColor: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-              columnWidths: const <int, TableColumnWidth>{
-                0: FlexColumnWidth(0.1),
-                1: FlexColumnWidth(0.6),
-                2: FlexColumnWidth(0.3),
-              },
-            );
-          },
+        body: currentTodo.length > 0
+            ? ListView.builder(
+                itemCount: toDoItems[currentTodo].length,
+                itemBuilder: (BuildContext ctx, int i) {
+                  return toDoItems[currentTodo][i];
+                },
+              )
+            : null,
+        drawer: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: SideDrawer(item: todoItemArray),
+            ),
+            TextField(
+              onChanged: (value) => todoName = value,
+              decoration: InputDecoration(
+                  labelText: "Add Items",
+                  labelStyle: TextStyle(color: Colors.orange, fontSize: 40)),
+              style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white),
+            ),
+            FloatingActionButton(
+              onPressed: addTodoItem,
+              child: Icon(Icons.add),
+            ),
+          ],
         ),
-        drawer: Column(children: [
-          RaisedButton(
-              onPressed: () {
-                setState(() {
-                  currentTodo = "Today";
-                });
-              },
-              child: Text("Item1")),
-          RaisedButton(
-              onPressed: () {
-                setState(() {
-                  currentTodo = "Shop";
-                });
-              },
-              child: Text("Item2")),
-        ]),
         floatingActionButton: Container(
           margin: const EdgeInsets.all(30),
           child: TextField(

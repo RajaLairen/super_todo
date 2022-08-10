@@ -1,44 +1,29 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 
 class Item extends StatefulWidget {
-  var itemName = "";
-  var index;
-  var clk;
 
-  Item({itemName, indx, click}) {
-    this.itemName = itemName;
-    this.index = indx;
-    this.clk = click;
-  }
+  const Item({Key? key, this.itemName, this.indx, this.click})
+      : super(key: key);
+
+  final itemName;
+  final indx;
+  final click;
 
   @override
-  State<Item> createState() =>
-      _ItemState(item: itemName, indx: index, clicK: clk);
+  State<Item> createState() => _ItemState();
 }
 
 class _ItemState extends State<Item> {
-  var item;
-  var indx;
-  var clickk;
-  _ItemState({Key? key, item, indx, clicK}) {
-    this.item = item;
-    this.indx = indx;
-    this.clickk = clicK;
-  }
 
   void delete() {
-    print(indx);
-    clickk(indx);
+    widget.click(widget.indx);
   }
 
   var tick = false;
-  
+
   Widget build(BuildContext context) {
     void check(bool) {
       setState(() {
-        print(bool);
         tick = !tick;
       });
     }
@@ -54,7 +39,7 @@ class _ItemState extends State<Item> {
             Container(
               margin: EdgeInsets.only(top: 10),
               child: Text(
-                item,
+                widget.itemName,
                 style: TextStyle(
                     fontSize: 20,
                     decoration: tick ? TextDecoration.lineThrough : null),
